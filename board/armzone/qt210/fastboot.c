@@ -2613,14 +2613,7 @@ int fastboot_init(struct cmd_fastboot_interface *interface)
 	fastboot_interface->transfer_buffer               = (unsigned char *) CONFIG_FASTBOOT_TRANSFER_BUFFER;
 	fastboot_interface->transfer_buffer_size          = CONFIG_FASTBOOT_TRANSFER_BUFFER_SIZE;
 
-/* hefb: LED */
-*(volatile unsigned int *) 0xE0200C00 = 0x00001111;
-*(volatile unsigned int *) 0xE0200C04 = 0x00000003;
-
 	memset((unsigned char *) CONFIG_FASTBOOT_TRANSFER_BUFFER, 0x0, FASTBOOT_REBOOT_MAGIC_SIZE);
-
-/* hefb: LED */
-*(volatile unsigned int *) 0xE0200C04 = 0x00000007;
 
 	ret = 0;	// This is a fake return value, because we do not initialize USB yet!
 

@@ -566,6 +566,8 @@ static int write_to_ptn(struct fastboot_ptentry *ptn, unsigned int addr, unsigne
 
 	if (ptn->flags & FASTBOOT_PTENTRY_FLAGS_USE_MMC_CMD)
 	{
+/*
+// this is for an older version of cmd_mmc.c
 		argv[2] = device;
 		argv[3] = buffer;
 		argv[4] = start;
@@ -577,6 +579,16 @@ static int write_to_ptn(struct fastboot_ptentry *ptn, unsigned int addr, unsigne
 		sprintf(length, "0x%x", (ptn->length / CONFIG_FASTBOOT_SDMMC_BLOCKSIZE));
 
 		ret = do_mmcops(NULL, 0, 6, argv);
+*/
+		argv[2] = buffer;
+		argv[3] = start;
+		argv[4] = length;
+
+		sprintf(buffer, "0x%x", addr);
+		sprintf(start, "0x%x", (ptn->start / CONFIG_FASTBOOT_SDMMC_BLOCKSIZE));
+		sprintf(length, "0x%x", (ptn->length / CONFIG_FASTBOOT_SDMMC_BLOCKSIZE));
+
+		ret = do_mmcops(NULL, 0, 5, argv);
 	}
 	else if (ptn->flags & FASTBOOT_PTENTRY_FLAGS_USE_MOVI_CMD)
 	{

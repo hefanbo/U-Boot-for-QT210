@@ -1,11 +1,16 @@
 U-Boot for QT210
 ================
 
-QT210 is a Cortex A8 dev-board featured Samsung S5PV210.  
+QT210 is a Cortex-A8 dev-board featured Samsung S5PV210.  
 This is U-Boot for QT210 based on [Linaro U-Boot][1] 12.09 ([Das U-Boot][2] version 2012.07)  
 Ported from [opencsbc-u-boot-mini210_linaro-2011.10-stable][3]
 
-By HE Fanbo, Nov. 2012
+Board provider: [Qinyan Electronic, Shanghai, P.R.China](http://www.armzone.com)
+
+This is a private project by HE Fanbo.
+
+Created: Nov. 2012
+Updated: Dec. 2012
 
 Features
 --------
@@ -13,8 +18,10 @@ Features
 
 Todo
 ----
-* Make fastboot fully functional
+* Make movi command fully functional
+* Define CONFIG_CMD_MOVINAND, add related files (e.g. common/env_auto.c)
 * PWM output for LCD backlight is not correct. see board/armzone/qt210/qt210.c - pwm_pre_init()
+* Boot from NAND
 * LAN adapter
 * (Should we?) try MMU
 * Tidy the codes
