@@ -33,7 +33,7 @@ ifdef CONFIG_SPL_BUILD
 COBJS	+= mmc_boot.o
 endif
 
-COBJS	+= movi.o
+COBJS	+= movi.o flash.o timer.o speed.o
 
 ifdef CONFIG_FASTBOOT
 COBJS	+= fastboot.o

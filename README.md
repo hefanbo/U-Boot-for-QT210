@@ -7,9 +7,10 @@ Ported from [opencsbc-u-boot-mini210_linaro-2011.10-stable][3]
 
 Board provider: [Qinyan Electronic, Shanghai, P.R.China](http://www.armzone.com)
 
-This is a private project by HE Fanbo.
+This is a private project by HE Fanbo.  
+This project is still under developing and is NOT fully functional.
 
-Created: Nov. 2012
+Created: Nov. 2012  
 Updated: Dec. 2012
 
 Features
@@ -18,13 +19,12 @@ Features
 
 Todo
 ----
-* Make movi command fully functional
-* Define CONFIG_CMD_MOVINAND, add related files (e.g. common/env_auto.c)
 * PWM output for LCD backlight is not correct. see board/armzone/qt210/qt210.c - pwm_pre_init()
 * Boot from NAND
 * LAN adapter
 * (Should we?) try MMU
 * Tidy the codes
+  - board/armzone/qt210/tools/mkv210_image.c
   - Fastboot
   - (Should we?) merge `include/s5pc11x.h` and `include/s5pc110.h` to `arch/arm/include/asm/arch-s5pc1xx/cpu.h`
   - ...
@@ -114,6 +114,60 @@ Add
 
     COBJS-$(CONFIG_FASTBOOT) += cmd_fastboot.o
     COBJS-$(CONFIG_FASTBOOT) += cmd_mmc_fdisk.o
+
+### *III. MAKE MOVI FULLY FUNCTIONAL*
+#### 1. Add files
+* common/env_auto.c
+* board/armzone/qt210/flash.c
+* board/armzone/qt210/timer.c
+* board/armzone/qt210/speed.c
+
+#### 2. Modify file: `drivers/mmc`
+Add
+
+    #ifdef CONFIG_CMD_MOVINAND
+    extern int init_raw_area_table(block_dev_desc_t *dev_desc);
+    #endif
+
+behind includes.
+
+Add
+
+    #ifdef CONFIG_CMD_MOVINAND
+        init_raw_area_table(&mmc->block_dev);
+    #endif
+
+at the end of function `mmc_startup`, before `return 0;`.
+
+#### 3. Modify file: `common/cmd_nvedit.c`
+Add
+
+    !defined(CONFIG_ENV_IS_IN_AUTO)	&& \
+
+behind
+
+    !defined(CONFIG_ENV_IS_IN_REMOTE)	&& \
+
+#### 4. Modify file: `common/Makefile`
+Add
+
+    ifeq ($(BOARD),qt210)
+    COBJS-y += env_auto.o
+    endif
+
+before
+
+    COBJS	:= $(sort $(COBJS-y))
+    XCOBJS	:= $(sort $(XCOBJS-y))
+
+#### 5. Modify file: `include/flash.h`
+Add
+
+    #define MX_ID_LV640EB	0x22CB22CB
+
+behind
+
+    #define MX_ID_LV320B	0x22A822A8
 
 Other Notes
 -----------

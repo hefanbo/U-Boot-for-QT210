@@ -181,107 +181,6 @@ static void save_env(struct fastboot_ptentry *ptn,
 #endif
 }
 
-#if 0
-static void save_block_values(struct fastboot_ptentry *ptn,
-			      unsigned int offset,
-			      unsigned int size)
-{
-	struct fastboot_ptentry *env_ptn;
-
-	char var[64], val[32];
-	char start[32], length[32];
-	char ecc_type[32];
-
-	char *lock[5]    = { "nand", "lock",   NULL, NULL, NULL, };
-	char *unlock[5]  = { "nand", "unlock", NULL, NULL, NULL, };
-	char *ecc[4]     = { "nand", "ecc",    NULL, NULL, };	
-	char *setenv[4]  = { "setenv", NULL, NULL, NULL, };
-	char *saveenv[2] = { "setenv", NULL, };
-	
-	setenv[1] = var;
-	setenv[2] = val;
-	lock[2] = unlock[2] = start;
-	lock[3] = unlock[3] = length;
-
-	printf ("saving it..\n");
-
-	if (size == 0)
-	{
-		/* The error case, where the variables are being unset */
-		
-		sprintf (var, "%s_nand_offset", ptn->name);
-		sprintf (val, "");
-		do_env_set (NULL, 0, 3, setenv);
-
-		sprintf (var, "%s_nand_size", ptn->name);
-		sprintf (val, "");
-		do_env_set (NULL, 0, 3, setenv);
-	}
-	else
-	{
-		/* Normal case */
-
-		sprintf (var, "%s_nand_offset", ptn->name);
-		sprintf (val, "0x%x", offset);
-
-		printf ("%s %s %s\n", setenv[0], setenv[1], setenv[2]);
-		
-		do_env_set (NULL, 0, 3, setenv);
-
-		sprintf (var, "%s_nand_size", ptn->name);
-
-		sprintf (val, "0x%x", size);
-
-		printf ("%s %s %s\n", setenv[0], setenv[1], setenv[2]);
-
-		do_env_set (NULL, 0, 3, setenv);
-	}
-
-
-	/* Warning : 
-	   The environment is assumed to be in a partition named 'enviroment'.
-	   It is very possible that your board stores the enviroment 
-	   someplace else. */
-	env_ptn = fastboot_flash_find_ptn("environment");
-
-	if (env_ptn)
-	{
-		/* Some flashing requires the nand's ecc to be set */
-		ecc[2] = ecc_type;
-		if ((env_ptn->flags & FASTBOOT_PTENTRY_FLAGS_WRITE_HW_ECC) &&
-		    (env_ptn->flags & FASTBOOT_PTENTRY_FLAGS_WRITE_SW_ECC)) 
-		{
-			/* Both can not be true */
-			printf ("Warning can not do hw and sw ecc for partition '%s'\n", ptn->name);
-			printf ("Ignoring these flags\n");
-		} 
-		else if (env_ptn->flags & FASTBOOT_PTENTRY_FLAGS_WRITE_HW_ECC)
-		{
-			sprintf (ecc_type, "hw");
-			CONFIG_FASTBOOT_FLASHCMD (NULL, 0, 3, ecc);
-		}
-		else if (env_ptn->flags & FASTBOOT_PTENTRY_FLAGS_WRITE_SW_ECC)
-		{
-			sprintf (ecc_type, "sw");
-			CONFIG_FASTBOOT_FLASHCMD (NULL, 0, 3, ecc);
-		}
-		
-		sprintf (start, "0x%x", env_ptn->start);
-		sprintf (length, "0x%x", env_ptn->length);			
-
-		/* This could be a problem is there is an outstanding lock */
-		CONFIG_FASTBOOT_FLASHCMD (NULL, 0, 4, unlock);
-	}
-
-	do_env_save (NULL, 0, 1, saveenv);
-	
-	if (env_ptn)
-	{
-		CONFIG_FASTBOOT_FLASHCMD (NULL, 0, 4, lock);
-	}
-}
-#endif
-
 static void reset_handler ()
 {
 	/* If there was a download going on, bail */
@@ -536,15 +435,6 @@ static int write_to_ptn(struct fastboot_ptentry *ptn, unsigned int addr, unsigne
 
 	ret = CONFIG_FASTBOOT_FLASHCMD(NULL, 0, 5, argv_write);
 
-#if 0
-	if (0 == repeat) {
-		if (ret) /* failed */
-			save_block_values(ptn, 0, 0);
-		else     /* success */
-			save_block_values(ptn, ptn->start, download_bytes);
-	}
-#endif
-
 	return ret;
 }
 #elif defined(CONFIG_FASTBOOT_SDMMCBSP)
@@ -566,20 +456,6 @@ static int write_to_ptn(struct fastboot_ptentry *ptn, unsigned int addr, unsigne
 
 	if (ptn->flags & FASTBOOT_PTENTRY_FLAGS_USE_MMC_CMD)
 	{
-/*
-// this is for an older version of cmd_mmc.c
-		argv[2] = device;
-		argv[3] = buffer;
-		argv[4] = start;
-		argv[5] = length;
-
-		sprintf(device, "mmc %d", 1);
-		sprintf(buffer, "0x%x", addr);
-		sprintf(start, "0x%x", (ptn->start / CONFIG_FASTBOOT_SDMMC_BLOCKSIZE));
-		sprintf(length, "0x%x", (ptn->length / CONFIG_FASTBOOT_SDMMC_BLOCKSIZE));
-
-		ret = do_mmcops(NULL, 0, 6, argv);
-*/
 		argv[2] = buffer;
 		argv[3] = start;
 		argv[4] = length;
@@ -618,9 +494,6 @@ static int write_to_ptn(struct fastboot_ptentry *ptn, unsigned int addr, unsigne
 		sprintf(buffer, "0x%x", addr);
 
 		ret = do_movi(NULL, 0, argc, argv);
-
-		/* the return value of do_movi is different from usual commands. Hence the followings. */
-		ret = 1 - ret;
 	}
 
 	return ret;

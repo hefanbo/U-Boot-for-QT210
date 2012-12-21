@@ -5,9 +5,6 @@
 #define BUFSIZE                 (8*1024)
 #define IMG_SIZE                (8*1024)
 #define SPL_HEADER_SIZE         16
-//#define FILE_PERM               (S_IRUSR | S_IWUSR | S_IRGRP \
-                                | S_IWGRP | S_IROTH | S_IWOTH)
-#define SPL_HEADER              "S5PC110 HEADER  "
 
 int main (int argc, char *argv[])
 {
@@ -60,7 +57,8 @@ int main (int argc, char *argv[])
 	count = (fileLen < (IMG_SIZE - SPL_HEADER_SIZE))
 		? fileLen : (IMG_SIZE - SPL_HEADER_SIZE);
 
-	memcpy(&Buf[0], SPL_HEADER, SPL_HEADER_SIZE);
+	Buf[0] = 0x00;
+	Buf[1] = 0x20;
 
 	nbytes = fread(Buf + SPL_HEADER_SIZE, 1, count, fp);
 

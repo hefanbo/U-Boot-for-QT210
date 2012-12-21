@@ -29,8 +29,6 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#define DEBUG
-
 #define CONFIG_SAMSUNG
 #define CONFIG_S5P
 #define CONFIG_QT210
@@ -67,6 +65,9 @@
 #ifndef CONFIG_SYS_DCACHE_OFF
 #define CONFIG_ENABLE_MMU
 #endif
+#ifndef CONFIG_ENABLE_MMU
+#define virt_to_phys(x)		(x)
+#endif
 
 #define CONFIG_DOS_PARTITION
 
@@ -86,6 +87,7 @@
 #define CONFIG_CMD_FAT
 #define CONFIG_CMD_MMC
 #define CONFIG_CMD_MOVI
+#define CONFIG_CMD_MOVINAND
 
 #undef CONFIG_CMD_NET
 #if defined(CONFIG_CMD_NET)
@@ -94,6 +96,8 @@
 #else
 #undef CONFIG_CMD_NFS
 #endif
+
+#define CONFIG_BOOTCOMMAND	"movi read kernel 30008000; movi read rootfs 40A00000 180000; bootm 30008000 40A00000"
 
 
 /* Clock */
@@ -145,8 +149,16 @@
 
 
 /* Flash */
-#define CONFIG_SYS_NO_FLASH
-#undef CONFIG_CMD_IMLS
+#define CONFIG_MX_LV640EB
+#define CONFIG_SYS_MAX_FLASH_BANKS	1
+#define CONFIG_SYS_MAX_FLASH_SECT	135
+#define PHYS_FLASH_SIZE			0x800000	/* 8MB */
+#define CONFIG_SYS_FLASH_BASE		0x80000000
+#define CONFIG_SYS_FLASH_CFI
+#define CONFIG_FLASH_CFI_LEGACY
+#define CONFIG_SYS_FLASH_LEGACY_512Kx16
+#define CONFIG_SYS_FLASH_ERASE_TOUT	(5*CONFIG_SYS_HZ)	/* Timeout for Flash Erase */
+#define CONFIG_SYS_FLASH_WRITE_TOUT	(5*CONGIF_SYS_HZ)	/* Timeout for Flash Write */
 
 
 /* Environment */
@@ -156,6 +168,7 @@
 #define BL1_SIZE		(8 << 10)	/* 8 kB reserved for BL1 */
 #define CONFIG_ENV_OFFSET	(RESERVE_BLOCK_SIZE + BL1_SIZE + ((16 + 512) * 1024))
 #define CONFIG_ENV_SIZE		0x4000		/* 16 kB */
+#define CONFIG_ENV_ADDR		0
 
 
 /* Fastboot */

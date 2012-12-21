@@ -197,6 +197,10 @@ COBJS-y += image.o
 COBJS-y += memsize.o
 COBJS-y += stdio.o
 
+ifeq ($(BOARD),qt210)
+COBJS-y += env_auto.o
+endif
+
 
 COBJS	:= $(sort $(COBJS-y))
 XCOBJS	:= $(sort $(XCOBJS-y))

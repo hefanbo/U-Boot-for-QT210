@@ -230,6 +230,7 @@ extern flash_info_t *flash_get_info(ulong base);
 #define MX_ID_LV320T	0x22A722A7	/* 29LV320T by Macronix, AMD compatible */
 #define AMD_ID_LV320B	0x22F922F9	/* 29LV320B ID (32 M, bottom boot sect) */
 #define MX_ID_LV320B	0x22A822A8	/* 29LV320B by Macronix, AMD compatible */
+#define MX_ID_LV640EB	0x22CB22CB	/* 29LV640EB ID (64 M, bottom boot sect) */
 
 #define AMD_ID_DL322T	0x22552255	/* 29DL322T ID (32 M, top boot sector)	*/
 #define AMD_ID_DL322B	0x22562256	/* 29DL322B ID (32 M, bottom boot sect) */

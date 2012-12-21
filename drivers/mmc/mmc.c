@@ -32,6 +32,10 @@
 #include <linux/list.h>
 #include <div64.h>
 
+#ifdef CONFIG_CMD_MOVINAND
+extern int init_raw_area_table(block_dev_desc_t *dev_desc);
+#endif
+
 /* Set block count limit because of 16 bit register limit on some hardware*/
 #ifndef CONFIG_SYS_MMC_MAX_BLK_COUNT
 #define CONFIG_SYS_MMC_MAX_BLK_COUNT 65535
@@ -1260,6 +1264,10 @@ int mmc_startup(struct mmc *mmc)
 	sprintf(mmc->block_dev.revision, "%d.%d", mmc->cid[2] >> 28,
 			(mmc->cid[2] >> 24) & 0xf);
 	init_part(&mmc->block_dev);
+
+#ifdef CONFIG_CMD_MOVINAND
+	init_raw_area_table(&mmc->block_dev);
+#endif
 
 	return 0;
 }
