@@ -7,8 +7,8 @@ Ported from [opencsbc-u-boot-mini210_linaro-2011.10-stable][3]
 
 Board provider: [Qinyan Electronic, Shanghai, P.R.China](http://www.armzone.com)
 
-This is a private project by HE Fanbo.  
-This project is still under developing and is NOT fully functional.
+This is a private project by Fanbo He.  
+This project is almost abandoned and is NOT fully functional.
 
 Created: Nov. 2012  
 Updated: Dec. 2012
